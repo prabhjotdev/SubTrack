@@ -19,7 +19,11 @@ export const formatCurrency = (amount: number): string => {
 };
 
 export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
+  // Parse date string to avoid timezone issues
+  // Split the date string (YYYY-MM-DD) and create date in local timezone at noon
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day, 12, 0, 0);
+
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
@@ -30,8 +34,11 @@ export const formatDate = (dateString: string): string => {
 export const getDaysUntil = (dateString: string): number => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const targetDate = new Date(dateString);
-  targetDate.setHours(0, 0, 0, 0);
+
+  // Parse date string to avoid timezone issues
+  const [year, month, day] = dateString.split('-').map(Number);
+  const targetDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+
   const diffTime = targetDate.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
