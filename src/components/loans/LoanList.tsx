@@ -142,10 +142,10 @@ export const LoanList: React.FC<LoanListProps> = ({
               )}
             </div>
 
-            {loan.lastPaymentDate && (
+            {loan.finalPaymentDate && (
               <div className="mb-4 pt-3 border-t border-gray-100">
                 <p className="text-xs text-gray-500">
-                  Last Payment: {formatDate(loan.lastPaymentDate)}
+                  Loan End Date: {formatDate(loan.finalPaymentDate)}
                 </p>
               </div>
             )}

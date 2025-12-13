@@ -23,7 +23,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
     amountPaidSoFar: initialData?.amountPaidSoFar?.toString() || '0',
     paymentAmount: initialData?.paymentAmount?.toString() || '',
     paymentDate: initialData?.paymentDate || '',
-    lastPaymentDate: initialData?.lastPaymentDate || '',
+    finalPaymentDate: initialData?.finalPaymentDate || '',
     colorTag: initialData?.colorTag || PRESET_COLORS[0].value,
   });
 
@@ -64,7 +64,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
       amountPaidSoFar: parseFloat(formData.amountPaidSoFar),
       paymentAmount: parseFloat(formData.paymentAmount),
       paymentDate: formData.paymentDate,
-      lastPaymentDate: formData.lastPaymentDate || undefined,
+      finalPaymentDate: formData.finalPaymentDate || undefined,
       colorTag: formData.colorTag,
     });
   };
@@ -139,10 +139,10 @@ export const LoanForm: React.FC<LoanFormProps> = ({
       />
 
       <Input
-        label="Last Payment Date"
+        label="Final Installment Date (Loan End Date)"
         type="date"
-        value={formData.lastPaymentDate}
-        onChange={(e) => setFormData({ ...formData, lastPaymentDate: e.target.value })}
+        value={formData.finalPaymentDate}
+        onChange={(e) => setFormData({ ...formData, finalPaymentDate: e.target.value })}
       />
 
       <ColorPicker

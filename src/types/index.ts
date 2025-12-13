@@ -16,7 +16,7 @@ export interface Loan {
   amountPaidSoFar: number;
   paymentAmount: number;
   paymentDate: string;
-  lastPaymentDate?: string;
+  finalPaymentDate?: string; // Date of final/last installment (when loan ends)
   colorTag: string;
 }
 
