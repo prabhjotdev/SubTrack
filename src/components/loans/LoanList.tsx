@@ -92,7 +92,7 @@ export const LoanList: React.FC<LoanListProps> = ({
             </div>
 
             {/* Progress Bar */}
-            <div className="mb-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border-2 border-gray-300">
+            <div className="mb-4 bg-gray-100 rounded-xl p-4 border-2 border-gray-300">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-bold text-gray-700">
                   Payment Progress
@@ -101,12 +101,13 @@ export const LoanList: React.FC<LoanListProps> = ({
                   {calculations.paymentProgress.toFixed(0)}%
                 </span>
               </div>
-              <div className="w-full bg-white rounded-full h-5 border-2 border-gray-400 shadow-inner">
+              <div className="w-full bg-gray-300 rounded-full h-6 border border-gray-400">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 rounded-full shadow-md transition-all duration-500 ease-out"
+                  className="bg-emerald-500 rounded-full transition-all duration-500"
                   style={{
                     width: `${calculations.paymentProgress}%`,
-                    minWidth: calculations.paymentProgress > 0 ? '2%' : '0%'
+                    height: '24px',
+                    minWidth: calculations.paymentProgress > 0 ? '8px' : '0'
                   }}
                 />
               </div>
