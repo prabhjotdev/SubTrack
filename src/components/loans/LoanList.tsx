@@ -15,14 +15,14 @@ export const LoanList: React.FC<LoanListProps> = ({
 }) => {
   if (loans.length === 0) {
     return (
-      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-12 text-center border-2 border-dashed border-emerald-200">
-        <svg className="w-20 h-20 text-emerald-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-2xl p-12 text-center border-2 border-dashed border-emerald-200 dark:border-emerald-700">
+        <svg className="w-20 h-20 text-emerald-400 dark:text-emerald-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
-        <h3 className="text-xl font-bold text-gray-800 mb-2">
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
           No loans yet
         </h3>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Add your first loan to start tracking your payments and progress!
         </p>
       </div>
@@ -44,7 +44,7 @@ export const LoanList: React.FC<LoanListProps> = ({
         return (
           <div
             key={loan.id}
-            className="bg-white rounded-2xl shadow-xl p-6 border-l-4 hover:shadow-2xl transition-all group"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border-l-4 hover:shadow-2xl transition-all group"
             style={{ borderLeftColor: loan.colorTag }}
           >
             {/* Header with color badge */}
@@ -57,11 +57,11 @@ export const LoanList: React.FC<LoanListProps> = ({
                   {loan.vendor.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-emerald-600 transition-colors mb-1">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors mb-1">
                     {loan.vendor}
                   </h3>
                   {loan.description && (
-                    <p className="text-sm text-gray-500 line-clamp-2">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                       {loan.description}
                     </p>
                   )}
@@ -71,83 +71,84 @@ export const LoanList: React.FC<LoanListProps> = ({
 
             {/* Financial Overview */}
             <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                <p className="text-xs text-gray-500 font-medium mb-1">Total Loan</p>
-                <p className="text-sm font-bold text-gray-900">
+              <div className="bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3 border border-gray-100 dark:border-gray-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Total Loan</p>
+                <p className="text-sm font-bold text-gray-900 dark:text-white">
                   {formatCurrency(loan.totalLoanAmount)}
                 </p>
               </div>
-              <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
-                <p className="text-xs text-emerald-600 font-medium mb-1">Paid</p>
-                <p className="text-sm font-bold text-emerald-700">
+              <div className="bg-emerald-50 dark:bg-emerald-900/40 rounded-lg p-3 border border-emerald-100 dark:border-emerald-800">
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">Paid</p>
+                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
                   {formatCurrency(loan.amountPaidSoFar)}
                 </p>
               </div>
-              <div className="bg-red-50 rounded-lg p-3 border border-red-100">
-                <p className="text-xs text-red-600 font-medium mb-1">Remaining</p>
-                <p className="text-sm font-bold text-red-700">
+              <div className="bg-red-50 dark:bg-red-900/40 rounded-lg p-3 border border-red-100 dark:border-red-800">
+                <p className="text-xs text-red-600 dark:text-red-400 font-medium mb-1">Remaining</p>
+                <p className="text-sm font-bold text-red-700 dark:text-red-300">
                   {formatCurrency(calculations.remainingBalance)}
                 </p>
               </div>
             </div>
 
             {/* Progress Bar */}
-            <div className="mb-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border-2 border-gray-300">
+            <div className="mb-4 bg-gray-100 dark:bg-gray-900/40 rounded-xl p-4 border-2 border-gray-300 dark:border-gray-600">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-bold text-gray-700">
+                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
                   Payment Progress
                 </span>
-                <span className="text-xl font-bold text-emerald-600">
+                <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
                   {calculations.paymentProgress.toFixed(0)}%
                 </span>
               </div>
-              <div className="w-full bg-white rounded-full h-5 border-2 border-gray-400 shadow-inner">
+              <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-6 border border-gray-400 dark:border-gray-600">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 rounded-full shadow-md transition-all duration-500 ease-out"
+                  className="bg-emerald-500 dark:bg-emerald-600 rounded-full transition-all duration-500"
                   style={{
                     width: `${calculations.paymentProgress}%`,
-                    minWidth: calculations.paymentProgress > 0 ? '2%' : '0%'
+                    height: '24px',
+                    minWidth: calculations.paymentProgress > 0 ? '8px' : '0'
                   }}
                 />
               </div>
             </div>
 
             {/* Payment Info */}
-            <div className="bg-blue-50 rounded-xl p-4 mb-4 border border-blue-100">
+            <div className="bg-blue-50 dark:bg-blue-900/40 rounded-xl p-4 mb-4 border border-blue-100 dark:border-blue-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-blue-600 font-medium mb-1">Next Payment</p>
-                  <p className="text-lg font-bold text-blue-900">
+                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Next Payment</p>
+                  <p className="text-lg font-bold text-blue-900 dark:text-blue-300">
                     {formatCurrency(loan.paymentAmount)}
                   </p>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-1 justify-end mb-1">
-                    <svg className="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <p className="text-xs text-blue-600 font-medium">Due Date</p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Due Date</p>
                   </div>
-                  <p className="text-sm font-semibold text-blue-900">
+                  <p className="text-sm font-semibold text-blue-900 dark:text-blue-300">
                     {formatDate(loan.paymentDate)}
                   </p>
                 </div>
               </div>
               {isOverdue && (
-                <div className="mt-3 bg-red-100 text-red-800 px-3 py-2 rounded-lg text-xs font-semibold text-center">
+                <div className="mt-3 bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 px-3 py-2 rounded-lg text-xs font-semibold text-center">
                   ⚠️ Payment Overdue
                 </div>
               )}
               {isUpcomingSoon && !isOverdue && (
-                <div className="mt-3 bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg text-xs font-semibold text-center">
+                <div className="mt-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 px-3 py-2 rounded-lg text-xs font-semibold text-center">
                   🔔 Due in {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
                 </div>
               )}
             </div>
 
             {loan.finalPaymentDate && (
-              <div className="mb-4 pt-3 border-t border-gray-100">
-                <p className="text-xs text-gray-500">
+              <div className="mb-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Loan End Date: {formatDate(loan.finalPaymentDate)}
                 </p>
               </div>
@@ -157,13 +158,13 @@ export const LoanList: React.FC<LoanListProps> = ({
             <div className="flex gap-3">
               <button
                 onClick={() => onEdit(loan)}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
+                className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
               >
                 📝 Edit
               </button>
               <button
                 onClick={() => onDelete(loan.id)}
-                className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
+                className="flex-1 bg-red-50 dark:bg-red-900/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
               >
                 🗑️ Delete
               </button>
