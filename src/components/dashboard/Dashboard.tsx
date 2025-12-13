@@ -41,55 +41,55 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total Cost Card */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 shadow-lg border border-blue-200">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/40 dark:to-blue-800/40 rounded-2xl p-6 shadow-lg border border-blue-200 dark:border-blue-700">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-blue-800 uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 uppercase tracking-wide">
               Total Cost
             </h3>
-            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-4xl font-bold text-blue-900 mb-1">
+          <p className="text-4xl font-bold text-blue-900 dark:text-blue-100 mb-1">
             {formatCurrency(totalMonthlySubscriptions)}
           </p>
-          <p className="text-sm text-blue-700">
+          <p className="text-sm text-blue-700 dark:text-blue-300">
             Monthly cost • {subscriptions.length} subscriptions
           </p>
         </div>
 
         {/* Upcoming Renewals Card */}
-        <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-lg border border-amber-200">
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/40 dark:to-amber-800/40 rounded-2xl p-6 shadow-lg border border-amber-200 dark:border-amber-700">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-amber-800 uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-amber-800 dark:text-amber-300 uppercase tracking-wide">
               Upcoming Renewals
             </h3>
-            <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-4xl font-bold text-amber-900 mb-1">
+          <p className="text-4xl font-bold text-amber-900 dark:text-amber-100 mb-1">
             {upcomingRenewalsCount}
           </p>
-          <p className="text-sm text-amber-700">
+          <p className="text-sm text-amber-700 dark:text-amber-300">
             Next 7 days • Track your progress
           </p>
         </div>
 
         {/* Loan Progress Card */}
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-6 shadow-lg border border-emerald-200">
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/40 dark:to-emerald-800/40 rounded-2xl p-6 shadow-lg border border-emerald-200 dark:border-emerald-700">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-emerald-800 uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
               Outstanding Loans
             </h3>
-            <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
-          <p className="text-4xl font-bold text-emerald-900 mb-1">
+          <p className="text-4xl font-bold text-emerald-900 dark:text-emerald-100 mb-1">
             {formatCurrency(totalOutstandingLoans)}
           </p>
-          <p className="text-sm text-emerald-700">
+          <p className="text-sm text-emerald-700 dark:text-emerald-300">
             {loans.length} active {loans.length === 1 ? 'loan' : 'loans'}
           </p>
         </div>
@@ -100,22 +100,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
         {/* Upcoming Subscriptions */}
         <div>
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               Upcoming Subscriptions
             </h2>
-            <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+            <span className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">
               Next 30 Days
             </span>
           </div>
           {upcomingSubscriptions.length === 0 ? (
-            <div className="bg-gray-50 rounded-xl p-8 text-center border-2 border-dashed border-gray-300">
-              <svg className="w-16 h-16 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <svg className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
-              <p className="text-gray-500 font-medium">
+              <p className="text-gray-500 dark:text-gray-400 font-medium">
                 No upcoming renewals
               </p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
                 Your subscriptions are all set for now
               </p>
             </div>
@@ -126,7 +126,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
                 return (
                   <div
                     key={subscription.id}
-                    className="bg-white rounded-xl p-5 shadow-md hover:shadow-xl transition-all border-l-4 group"
+                    className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-md hover:shadow-xl transition-all border-l-4 group"
                     style={{ borderLeftColor: subscription.colorTag }}
                   >
                     <div className="flex items-start justify-between">
@@ -138,21 +138,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
                           {subscription.vendor.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">
+                          <h4 className="font-bold text-gray-900 dark:text-white text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                             {subscription.vendor}
                           </h4>
-                          <p className="text-sm text-gray-500 mt-0.5">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                             {formatDate(subscription.renewalDate)}
                           </p>
                           {daysUntil >= 0 && daysUntil <= 7 && (
-                            <span className="inline-block mt-2 text-xs bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-semibold">
+                            <span className="inline-block mt-2 text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full font-semibold">
                               {daysUntil === 0 ? '🔔 Due Today!' : `Due in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`}
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="text-right ml-4">
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
                           {formatCurrency(subscription.amount)}
                         </p>
                       </div>
@@ -167,22 +167,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
         {/* Upcoming Loan Payments */}
         <div>
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               Loan Payments Due
             </h2>
-            <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full">
+            <span className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full">
               Next 30 Days
             </span>
           </div>
           {upcomingLoans.length === 0 ? (
-            <div className="bg-gray-50 rounded-xl p-8 text-center border-2 border-dashed border-gray-300">
-              <svg className="w-16 h-16 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <svg className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <p className="text-gray-500 font-medium">
+              <p className="text-gray-500 dark:text-gray-400 font-medium">
                 No upcoming payments
               </p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
                 All your loan payments are up to date
               </p>
             </div>
@@ -194,7 +194,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
                 return (
                   <div
                     key={loan.id}
-                    className="bg-white rounded-xl p-5 shadow-md hover:shadow-xl transition-all border-l-4 group"
+                    className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-md hover:shadow-xl transition-all border-l-4 group"
                     style={{ borderLeftColor: loan.colorTag }}
                   >
                     <div className="space-y-3">
@@ -207,21 +207,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
                             {loan.vendor.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-bold text-gray-900 text-lg group-hover:text-emerald-600 transition-colors">
+                            <h4 className="font-bold text-gray-900 dark:text-white text-lg group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                               {loan.vendor}
                             </h4>
-                            <p className="text-sm text-gray-500 mt-0.5">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                               {formatDate(loan.paymentDate)}
                             </p>
                             {daysUntil >= 0 && daysUntil <= 7 && (
-                              <span className="inline-block mt-2 text-xs bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-semibold">
+                              <span className="inline-block mt-2 text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full font-semibold">
                                 {daysUntil === 0 ? '🔔 Due Today!' : `Due in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`}
                               </span>
                             )}
                           </div>
                         </div>
                         <div className="text-right ml-4">
-                          <p className="text-2xl font-bold text-gray-900">
+                          <p className="text-2xl font-bold text-gray-900 dark:text-white">
                             {formatCurrency(loan.paymentAmount)}
                           </p>
                         </div>
@@ -230,16 +230,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
                       {/* Progress Bar */}
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-500 font-medium">
+                          <span className="text-gray-500 dark:text-gray-400 font-medium">
                             Remaining: {formatCurrency(remainingBalance)}
                           </span>
-                          <span className="text-emerald-600 font-semibold">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                             {paymentProgress.toFixed(0)}% paid
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2.5 rounded-full transition-all duration-500 shadow-sm"
+                            className="bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-400 dark:to-emerald-500 h-2.5 rounded-full transition-all duration-500 shadow-sm"
                             style={{ width: `${paymentProgress}%` }}
                           />
                         </div>
