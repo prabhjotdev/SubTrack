@@ -1,7 +1,6 @@
 import React from 'react';
 import { Loan } from '../../types';
 import { formatCurrency, formatDate, getDaysUntil, calculateLoanDetails } from '../../utils/calculations';
-import { Button } from '../common/Button';
 
 interface LoanListProps {
   loans: Loan[];
@@ -16,8 +15,16 @@ export const LoanList: React.FC<LoanListProps> = ({
 }) => {
   if (loans.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        No loans yet. Add your first loan to get started!
+      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-12 text-center border-2 border-dashed border-emerald-200">
+        <svg className="w-20 h-20 text-emerald-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">
+          No loans yet
+        </h3>
+        <p className="text-gray-600">
+          Add your first loan to start tracking your payments and progress!
+        </p>
       </div>
     );
   }
@@ -27,7 +34,7 @@ export const LoanList: React.FC<LoanListProps> = ({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {sortedLoans.map((loan) => {
         const calculations = calculateLoanDetails(loan);
         const daysUntil = getDaysUntil(loan.paymentDate);
@@ -37,114 +44,126 @@ export const LoanList: React.FC<LoanListProps> = ({
         return (
           <div
             key={loan.id}
-            className="bg-white rounded-lg shadow-md p-5 border-l-4 transition-transform hover:scale-[1.01]"
+            className="bg-white rounded-2xl shadow-xl p-6 border-l-4 hover:shadow-2xl transition-all group"
             style={{ borderLeftColor: loan.colorTag }}
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-lg font-semibold text-gray-900">
+            {/* Header with color badge */}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start gap-3 flex-1">
+                <div
+                  className="w-14 h-14 rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-lg"
+                  style={{ backgroundColor: loan.colorTag }}
+                >
+                  {loan.vendor.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-emerald-600 transition-colors mb-1">
                     {loan.vendor}
                   </h3>
-                  <span
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: loan.colorTag }}
-                  />
+                  {loan.description && (
+                    <p className="text-sm text-gray-500 line-clamp-2">
+                      {loan.description}
+                    </p>
+                  )}
                 </div>
-                {loan.description && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    {loan.description}
+              </div>
+            </div>
+
+            {/* Financial Overview */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                <p className="text-xs text-gray-500 font-medium mb-1">Total Loan</p>
+                <p className="text-sm font-bold text-gray-900">
+                  {formatCurrency(loan.totalLoanAmount)}
+                </p>
+              </div>
+              <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                <p className="text-xs text-emerald-600 font-medium mb-1">Paid</p>
+                <p className="text-sm font-bold text-emerald-700">
+                  {formatCurrency(loan.amountPaidSoFar)}
+                </p>
+              </div>
+              <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+                <p className="text-xs text-red-600 font-medium mb-1">Remaining</p>
+                <p className="text-sm font-bold text-red-700">
+                  {formatCurrency(calculations.remainingBalance)}
+                </p>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-gray-600">
+                  Payment Progress
+                </span>
+                <span className="text-xs font-bold text-emerald-600">
+                  {calculations.paymentProgress.toFixed(0)}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                <div
+                  className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-3 rounded-full transition-all duration-500 shadow-sm"
+                  style={{ width: `${calculations.paymentProgress}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Payment Info */}
+            <div className="bg-blue-50 rounded-xl p-4 mb-4 border border-blue-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-blue-600 font-medium mb-1">Next Payment</p>
+                  <p className="text-lg font-bold text-blue-900">
+                    {formatCurrency(loan.paymentAmount)}
                   </p>
-                )}
-
-                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="font-medium text-gray-700">Total Loan:</span>
-                      <span className="text-gray-900 font-semibold">
-                        {formatCurrency(loan.totalLoanAmount)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="font-medium text-gray-700">Paid:</span>
-                      <span className="text-green-600 font-semibold">
-                        {formatCurrency(loan.amountPaidSoFar)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="font-medium text-gray-700">Remaining:</span>
-                      <span className="text-red-600 font-semibold">
-                        {formatCurrency(calculations.remainingBalance)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="font-medium text-gray-700">Payment:</span>
-                      <span className="text-gray-900 font-semibold">
-                        {formatCurrency(loan.paymentAmount)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="font-medium text-gray-700">Next Due:</span>
-                      <span className="text-gray-900">
-                        {formatDate(loan.paymentDate)}
-                      </span>
-                      {isOverdue && (
-                        <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-medium">
-                          Overdue
-                        </span>
-                      )}
-                      {isUpcomingSoon && !isOverdue && (
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">
-                          Due in {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
-                        </span>
-                      )}
-                    </div>
-                    {loan.lastPaymentDate && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium text-gray-700">Last Payment:</span>
-                        <span className="text-gray-600">
-                          {formatDate(loan.lastPaymentDate)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
                 </div>
-
-                <div className="mt-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-gray-700">Progress:</span>
-                    <span className="text-xs text-gray-600">
-                      {calculations.paymentProgress.toFixed(1)}%
-                    </span>
+                <div className="text-right">
+                  <div className="flex items-center gap-1 justify-end mb-1">
+                    <svg className="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-xs text-blue-600 font-medium">Due Date</p>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div
-                      className="bg-green-600 h-2.5 rounded-full transition-all"
-                      style={{ width: `${calculations.paymentProgress}%` }}
-                    />
-                  </div>
+                  <p className="text-sm font-semibold text-blue-900">
+                    {formatDate(loan.paymentDate)}
+                  </p>
                 </div>
               </div>
+              {isOverdue && (
+                <div className="mt-3 bg-red-100 text-red-800 px-3 py-2 rounded-lg text-xs font-semibold text-center">
+                  ⚠️ Payment Overdue
+                </div>
+              )}
+              {isUpcomingSoon && !isOverdue && (
+                <div className="mt-3 bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg text-xs font-semibold text-center">
+                  🔔 Due in {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+                </div>
+              )}
+            </div>
 
-              <div className="flex gap-2 ml-4">
-                <Button
-                  variant="secondary"
-                  onClick={() => onEdit(loan)}
-                  className="text-sm px-3 py-1"
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => onDelete(loan.id)}
-                  className="text-sm px-3 py-1"
-                >
-                  Delete
-                </Button>
+            {loan.lastPaymentDate && (
+              <div className="mb-4 pt-3 border-t border-gray-100">
+                <p className="text-xs text-gray-500">
+                  Last Payment: {formatDate(loan.lastPaymentDate)}
+                </p>
               </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => onEdit(loan)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
+              >
+                📝 Edit
+              </button>
+              <button
+                onClick={() => onDelete(loan.id)}
+                className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
+              >
+                🗑️ Delete
+              </button>
             </div>
           </div>
         );

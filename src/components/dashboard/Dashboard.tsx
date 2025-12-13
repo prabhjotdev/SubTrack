@@ -1,6 +1,5 @@
 import React from 'react';
 import { Subscription, Loan } from '../../types';
-import { Card } from '../common/Card';
 import {
   formatCurrency,
   formatDate,
@@ -33,127 +32,220 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
     return sum + remainingBalance;
   }, 0);
 
+  const upcomingRenewalsCount = upcomingSubscriptions.filter(
+    sub => getDaysUntil(sub.renewalDate) <= 7
+  ).length;
+
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Total Monthly Subscriptions
-          </h3>
-          <p className="text-3xl font-bold text-blue-600">
+    <div className="space-y-8">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Total Cost Card */}
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 shadow-lg border border-blue-200">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-blue-800 uppercase tracking-wide">
+              Total Cost
+            </h3>
+            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-4xl font-bold text-blue-900 mb-1">
             {formatCurrency(totalMonthlySubscriptions)}
           </p>
-          <p className="text-sm text-gray-600 mt-1">
-            {subscriptions.length} active {subscriptions.length === 1 ? 'subscription' : 'subscriptions'}
+          <p className="text-sm text-blue-700">
+            Monthly cost • {subscriptions.length} subscriptions
           </p>
-        </Card>
+        </div>
 
-        <Card>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Total Outstanding Loans
-          </h3>
-          <p className="text-3xl font-bold text-red-600">
+        {/* Upcoming Renewals Card */}
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-lg border border-amber-200">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-amber-800 uppercase tracking-wide">
+              Upcoming Renewals
+            </h3>
+            <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-4xl font-bold text-amber-900 mb-1">
+            {upcomingRenewalsCount}
+          </p>
+          <p className="text-sm text-amber-700">
+            Next 7 days • Track your progress
+          </p>
+        </div>
+
+        {/* Loan Progress Card */}
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-6 shadow-lg border border-emerald-200">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-emerald-800 uppercase tracking-wide">
+              Outstanding Loans
+            </h3>
+            <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <p className="text-4xl font-bold text-emerald-900 mb-1">
             {formatCurrency(totalOutstandingLoans)}
           </p>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-emerald-700">
             {loans.length} active {loans.length === 1 ? 'loan' : 'loans'}
           </p>
-        </Card>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Upcoming Items Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Upcoming Subscriptions */}
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            Upcoming Subscriptions (Next 30 Days)
-          </h2>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Upcoming Subscriptions
+            </h2>
+            <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+              Next 30 Days
+            </span>
+          </div>
           {upcomingSubscriptions.length === 0 ? (
-            <Card>
-              <p className="text-gray-500 text-center py-4">
-                No upcoming subscription renewals
+            <div className="bg-gray-50 rounded-xl p-8 text-center border-2 border-dashed border-gray-300">
+              <svg className="w-16 h-16 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <p className="text-gray-500 font-medium">
+                No upcoming renewals
               </p>
-            </Card>
+              <p className="text-sm text-gray-400 mt-1">
+                Your subscriptions are all set for now
+              </p>
+            </div>
           ) : (
             <div className="space-y-3">
               {upcomingSubscriptions.map((subscription) => {
                 const daysUntil = getDaysUntil(subscription.renewalDate);
                 return (
-                  <Card
+                  <div
                     key={subscription.id}
-                    className="border-l-4 hover:shadow-lg transition-shadow"
+                    className="bg-white rounded-xl p-5 shadow-md hover:shadow-xl transition-all border-l-4 group"
                     style={{ borderLeftColor: subscription.colorTag }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">
-                          {subscription.vendor}
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {formatDate(subscription.renewalDate)}
-                        </p>
-                        {daysUntil >= 0 && daysUntil <= 7 && (
-                          <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium inline-block mt-1">
-                            {daysUntil === 0 ? 'Today' : `In ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`}
-                          </span>
-                        )}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div
+                          className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-md"
+                          style={{ backgroundColor: subscription.colorTag }}
+                        >
+                          {subscription.vendor.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">
+                            {subscription.vendor}
+                          </h4>
+                          <p className="text-sm text-gray-500 mt-0.5">
+                            {formatDate(subscription.renewalDate)}
+                          </p>
+                          {daysUntil >= 0 && daysUntil <= 7 && (
+                            <span className="inline-block mt-2 text-xs bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-semibold">
+                              {daysUntil === 0 ? '🔔 Due Today!' : `Due in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-gray-900">
+                      <div className="text-right ml-4">
+                        <p className="text-2xl font-bold text-gray-900">
                           {formatCurrency(subscription.amount)}
                         </p>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 );
               })}
             </div>
           )}
         </div>
 
+        {/* Upcoming Loan Payments */}
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            Upcoming Loan Payments (Next 30 Days)
-          </h2>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Loan Payments Due
+            </h2>
+            <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full">
+              Next 30 Days
+            </span>
+          </div>
           {upcomingLoans.length === 0 ? (
-            <Card>
-              <p className="text-gray-500 text-center py-4">
-                No upcoming loan payments
+            <div className="bg-gray-50 rounded-xl p-8 text-center border-2 border-dashed border-gray-300">
+              <svg className="w-16 h-16 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <p className="text-gray-500 font-medium">
+                No upcoming payments
               </p>
-            </Card>
+              <p className="text-sm text-gray-400 mt-1">
+                All your loan payments are up to date
+              </p>
+            </div>
           ) : (
             <div className="space-y-3">
               {upcomingLoans.map((loan) => {
                 const daysUntil = getDaysUntil(loan.paymentDate);
-                const { remainingBalance } = calculateLoanDetails(loan);
+                const { remainingBalance, paymentProgress } = calculateLoanDetails(loan);
                 return (
-                  <Card
+                  <div
                     key={loan.id}
-                    className="border-l-4 hover:shadow-lg transition-shadow"
+                    className="bg-white rounded-xl p-5 shadow-md hover:shadow-xl transition-all border-l-4 group"
                     style={{ borderLeftColor: loan.colorTag }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">
-                          {loan.vendor}
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {formatDate(loan.paymentDate)}
-                        </p>
-                        {daysUntil >= 0 && daysUntil <= 7 && (
-                          <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium inline-block mt-1">
-                            {daysUntil === 0 ? 'Today' : `In ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`}
-                          </span>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          Remaining: {formatCurrency(remainingBalance)}
-                        </p>
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-3 flex-1">
+                          <div
+                            className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-md"
+                            style={{ backgroundColor: loan.colorTag }}
+                          >
+                            {loan.vendor.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-bold text-gray-900 text-lg group-hover:text-emerald-600 transition-colors">
+                              {loan.vendor}
+                            </h4>
+                            <p className="text-sm text-gray-500 mt-0.5">
+                              {formatDate(loan.paymentDate)}
+                            </p>
+                            {daysUntil >= 0 && daysUntil <= 7 && (
+                              <span className="inline-block mt-2 text-xs bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-semibold">
+                                {daysUntil === 0 ? '🔔 Due Today!' : `Due in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right ml-4">
+                          <p className="text-2xl font-bold text-gray-900">
+                            {formatCurrency(loan.paymentAmount)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-gray-900">
-                          {formatCurrency(loan.paymentAmount)}
-                        </p>
+
+                      {/* Progress Bar */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-gray-500 font-medium">
+                            Remaining: {formatCurrency(remainingBalance)}
+                          </span>
+                          <span className="text-emerald-600 font-semibold">
+                            {paymentProgress.toFixed(0)}% paid
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2.5 rounded-full transition-all duration-500 shadow-sm"
+                            style={{ width: `${paymentProgress}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 );
               })}
             </div>
