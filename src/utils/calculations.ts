@@ -1,4 +1,4 @@
-import { Loan, LoanCalculations } from '../types';
+import { Loan, LoanCalculations, Subscription, BillingCycle } from '../types';
 
 export const calculateLoanDetails = (loan: Loan): LoanCalculations => {
   const remainingBalance = loan.totalLoanAmount - loan.amountPaidSoFar;
@@ -47,4 +47,61 @@ export const getDaysUntil = (dateString: string): number => {
 export const isUpcoming = (dateString: string, days: number = 30): boolean => {
   const daysUntil = getDaysUntil(dateString);
   return daysUntil >= 0 && daysUntil <= days;
+};
+
+// Calculate the next renewal date based on billing cycle
+export const getNextRenewalDate = (currentDate: string, billingCycle: BillingCycle): string => {
+  const [year, month, day] = currentDate.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+
+  switch (billingCycle) {
+    case 'weekly':
+      date.setDate(date.getDate() + 7);
+      break;
+    case 'monthly':
+      date.setMonth(date.getMonth() + 1);
+      break;
+    case 'quarterly':
+      date.setMonth(date.getMonth() + 3);
+      break;
+    case 'yearly':
+      date.setFullYear(date.getFullYear() + 1);
+      break;
+  }
+
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+// Check if a subscription renewal date has passed and needs to be updated
+export const needsRenewal = (renewalDate: string): boolean => {
+  const daysUntil = getDaysUntil(renewalDate);
+  return daysUntil < 0;
+};
+
+// Auto-advance renewal date if it's in the past
+export const autoRenewSubscription = (subscription: Subscription): Subscription => {
+  // Default to monthly if billingCycle is not set (for backwards compatibility)
+  const billingCycle = subscription.billingCycle || 'monthly';
+
+  if (!needsRenewal(subscription.renewalDate)) {
+    return {
+      ...subscription,
+      billingCycle, // Ensure billingCycle is set
+    };
+  }
+
+  let nextRenewal = subscription.renewalDate;
+  // Keep advancing until we get a future date
+  while (needsRenewal(nextRenewal)) {
+    nextRenewal = getNextRenewalDate(nextRenewal, billingCycle);
+  }
+
+  return {
+    ...subscription,
+    renewalDate: nextRenewal,
+    billingCycle, // Ensure billingCycle is set
+  };
 };

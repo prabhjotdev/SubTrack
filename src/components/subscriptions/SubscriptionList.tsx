@@ -6,12 +6,14 @@ interface SubscriptionListProps {
   subscriptions: Subscription[];
   onEdit: (subscription: Subscription) => void;
   onDelete: (id: string) => void;
+  onMarkAsPaid: (id: string) => void;
 }
 
 export const SubscriptionList: React.FC<SubscriptionListProps> = ({
   subscriptions,
   onEdit,
   onDelete,
+  onMarkAsPaid,
 }) => {
   if (subscriptions.length === 0) {
     return (
@@ -69,7 +71,13 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
 
               {/* Amount */}
               <div className="bg-blue-50 dark:bg-blue-900/40 rounded-lg p-3 border border-blue-100 dark:border-blue-800">
-                <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Monthly Cost</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
+                  {subscription.billingCycle === 'weekly' && 'Weekly Cost'}
+                  {subscription.billingCycle === 'monthly' && 'Monthly Cost'}
+                  {subscription.billingCycle === 'quarterly' && 'Quarterly Cost'}
+                  {subscription.billingCycle === 'yearly' && 'Yearly Cost'}
+                  {!subscription.billingCycle && 'Cost'}
+                </p>
                 <p className="text-2xl font-bold text-blue-900 dark:text-blue-300">
                   {formatCurrency(subscription.amount)}
                 </p>
@@ -104,6 +112,19 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
                     Purchased: {formatDate(subscription.datePurchased)}
                   </p>
                 </div>
+              )}
+
+              {/* Mark as Paid button - show when due in 7 days or less */}
+              {daysUntil <= 7 && (
+                <button
+                  onClick={() => onMarkAsPaid(subscription.id)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Mark as Paid
+                </button>
               )}
 
               {/* Actions */}

@@ -1,3 +1,5 @@
+export type BillingCycle = 'monthly' | 'yearly' | 'weekly' | 'quarterly';
+
 export interface Subscription {
   id: string;
   vendor: string;
@@ -6,6 +8,7 @@ export interface Subscription {
   renewalDate: string;
   amount: number;
   colorTag: string;
+  billingCycle?: BillingCycle; // Optional for backwards compatibility
 }
 
 export interface Loan {
