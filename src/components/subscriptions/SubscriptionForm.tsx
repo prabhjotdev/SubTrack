@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Subscription } from '../../types';
+import { Subscription, BillingCycle } from '../../types';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 import { ColorPicker } from '../common/ColorPicker';
@@ -23,6 +23,7 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
     renewalDate: initialData?.renewalDate || '',
     amount: initialData?.amount?.toString() || '',
     colorTag: initialData?.colorTag || PRESET_COLORS[0].value,
+    billingCycle: (initialData?.billingCycle || 'monthly') as BillingCycle,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -53,6 +54,7 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       renewalDate: formData.renewalDate,
       amount: parseFloat(formData.amount),
       colorTag: formData.colorTag,
+      billingCycle: formData.billingCycle,
     });
   };
 
@@ -107,6 +109,23 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
         required
         placeholder="0.00"
       />
+
+      <div className="space-y-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Billing Cycle <span className="text-red-500 dark:text-red-400">*</span>
+        </label>
+        <select
+          value={formData.billingCycle}
+          onChange={(e) => setFormData({ ...formData, billingCycle: e.target.value as BillingCycle })}
+          className="w-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
+        >
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly (3 months)</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
 
       <ColorPicker
         selectedColor={formData.colorTag}

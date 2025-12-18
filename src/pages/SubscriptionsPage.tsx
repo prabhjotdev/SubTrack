@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Subscription } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { SubscriptionForm } from '../components/subscriptions/SubscriptionForm';
 import { SubscriptionList } from '../components/subscriptions/SubscriptionList';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
+import { autoRenewSubscription, getNextRenewalDate } from '../utils/calculations';
 
 export const SubscriptionsPage: React.FC = () => {
   const [subscriptions, setSubscriptions] = useLocalStorage<Subscription[]>(
@@ -13,6 +14,18 @@ export const SubscriptionsPage: React.FC = () => {
   );
   const [showForm, setShowForm] = useState(false);
   const [editingSubscription, setEditingSubscription] = useState<Subscription | undefined>();
+
+  // Auto-renew subscriptions when component mounts or subscriptions change
+  useEffect(() => {
+    const renewedSubscriptions = subscriptions.map(sub => autoRenewSubscription(sub));
+    // Only update if something changed
+    const hasChanges = renewedSubscriptions.some((renewed, index) =>
+      renewed.renewalDate !== subscriptions[index].renewalDate
+    );
+    if (hasChanges) {
+      setSubscriptions(renewedSubscriptions);
+    }
+  }, []);
 
   const handleAdd = (subscription: Omit<Subscription, 'id'>) => {
     const newSubscription: Subscription = {
@@ -45,6 +58,17 @@ export const SubscriptionsPage: React.FC = () => {
     if (window.confirm('Are you sure you want to delete this subscription?')) {
       setSubscriptions(subscriptions.filter((sub) => sub.id !== id));
     }
+  };
+
+  const handleMarkAsPaid = (id: string) => {
+    const updatedSubscriptions = subscriptions.map((sub) => {
+      if (sub.id === id) {
+        const nextRenewal = getNextRenewalDate(sub.renewalDate, sub.billingCycle);
+        return { ...sub, renewalDate: nextRenewal };
+      }
+      return sub;
+    });
+    setSubscriptions(updatedSubscriptions);
   };
 
   const handleCancel = () => {
@@ -80,6 +104,7 @@ export const SubscriptionsPage: React.FC = () => {
         subscriptions={subscriptions}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onMarkAsPaid={handleMarkAsPaid}
       />
     </div>
   );
