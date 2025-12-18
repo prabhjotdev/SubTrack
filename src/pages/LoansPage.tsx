@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loan } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { LoanForm } from '../components/loans/LoanForm';
 import { LoanList } from '../components/loans/LoanList';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
+import { autoAdvanceLoanPayment, getNextRenewalDate } from '../utils/calculations';
 
 export const LoansPage: React.FC = () => {
   const [loans, setLoans] = useLocalStorage<Loan[]>('subtrack_loans', []);
   const [showForm, setShowForm] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | undefined>();
+
+  // Auto-advance loan payment dates when component mounts
+  useEffect(() => {
+    const advancedLoans = loans.map(loan => autoAdvanceLoanPayment(loan));
+    // Only update if something changed
+    const hasChanges = advancedLoans.some((advanced, index) =>
+      advanced.paymentDate !== loans[index].paymentDate
+    );
+    if (hasChanges) {
+      setLoans(advancedLoans);
+    }
+  }, []);
 
   const handleAdd = (loan: Omit<Loan, 'id'>) => {
     const newLoan: Loan = {
@@ -42,6 +55,26 @@ export const LoansPage: React.FC = () => {
     if (window.confirm('Are you sure you want to delete this loan?')) {
       setLoans(loans.filter((loan) => loan.id !== id));
     }
+  };
+
+  const handleMarkAsPaid = (id: string) => {
+    const updatedLoans = loans.map((loan) => {
+      if (loan.id === id) {
+        const billingCycle = loan.billingCycle || 'monthly';
+        const nextPayment = getNextRenewalDate(loan.paymentDate, billingCycle);
+        const newAmountPaid = loan.amountPaidSoFar + loan.paymentAmount;
+        // Don't exceed total loan amount
+        const finalAmountPaid = Math.min(newAmountPaid, loan.totalLoanAmount);
+
+        return {
+          ...loan,
+          paymentDate: nextPayment,
+          amountPaidSoFar: finalAmountPaid,
+        };
+      }
+      return loan;
+    });
+    setLoans(updatedLoans);
   };
 
   const handleCancel = () => {
@@ -77,6 +110,7 @@ export const LoansPage: React.FC = () => {
         loans={loans}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onMarkAsPaid={handleMarkAsPaid}
       />
     </div>
   );

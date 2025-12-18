@@ -6,12 +6,14 @@ interface LoanListProps {
   loans: Loan[];
   onEdit: (loan: Loan) => void;
   onDelete: (id: string) => void;
+  onMarkAsPaid: (id: string) => void;
 }
 
 export const LoanList: React.FC<LoanListProps> = ({
   loans,
   onEdit,
   onDelete,
+  onMarkAsPaid,
 }) => {
   if (loans.length === 0) {
     return (
@@ -117,7 +119,13 @@ export const LoanList: React.FC<LoanListProps> = ({
             <div className="bg-blue-50 dark:bg-blue-900/40 rounded-xl p-4 mb-4 border border-blue-100 dark:border-blue-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Next Payment</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
+                    {loan.billingCycle === 'weekly' && 'Weekly Payment'}
+                    {loan.billingCycle === 'monthly' && 'Monthly Payment'}
+                    {loan.billingCycle === 'quarterly' && 'Quarterly Payment'}
+                    {loan.billingCycle === 'yearly' && 'Yearly Payment'}
+                    {!loan.billingCycle && 'Payment'}
+                  </p>
                   <p className="text-lg font-bold text-blue-900 dark:text-blue-300">
                     {formatCurrency(loan.paymentAmount)}
                   </p>
@@ -152,6 +160,19 @@ export const LoanList: React.FC<LoanListProps> = ({
                   Loan End Date: {formatDate(loan.finalPaymentDate)}
                 </p>
               </div>
+            )}
+
+            {/* Mark as Paid button - show when due in 7 days or less */}
+            {daysUntil <= 7 && (
+              <button
+                onClick={() => onMarkAsPaid(loan.id)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Mark as Paid
+              </button>
             )}
 
             {/* Actions */}

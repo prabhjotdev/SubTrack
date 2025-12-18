@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loan } from '../../types';
+import { Loan, BillingCycle } from '../../types';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 import { ColorPicker } from '../common/ColorPicker';
@@ -25,6 +25,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
     paymentDate: initialData?.paymentDate || '',
     finalPaymentDate: initialData?.finalPaymentDate || '',
     colorTag: initialData?.colorTag || PRESET_COLORS[0].value,
+    billingCycle: (initialData?.billingCycle || 'monthly') as BillingCycle,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -66,6 +67,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
       paymentDate: formData.paymentDate,
       finalPaymentDate: formData.finalPaymentDate || undefined,
       colorTag: formData.colorTag,
+      billingCycle: formData.billingCycle,
     });
   };
 
@@ -128,6 +130,23 @@ export const LoanForm: React.FC<LoanFormProps> = ({
         required
         placeholder="0.00"
       />
+
+      <div className="space-y-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Payment Frequency <span className="text-red-500 dark:text-red-400">*</span>
+        </label>
+        <select
+          value={formData.billingCycle}
+          onChange={(e) => setFormData({ ...formData, billingCycle: e.target.value as BillingCycle })}
+          className="w-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
+        >
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly (3 months)</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
 
       <Input
         label="Payment Date (Next Due)"
