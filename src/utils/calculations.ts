@@ -105,3 +105,28 @@ export const autoRenewSubscription = (subscription: Subscription): Subscription 
     billingCycle, // Ensure billingCycle is set
   };
 };
+
+// Auto-advance loan payment date if it's in the past
+export const autoAdvanceLoanPayment = (loan: Loan): Loan => {
+  // Default to monthly if billingCycle is not set (for backwards compatibility)
+  const billingCycle = loan.billingCycle || 'monthly';
+
+  if (!needsRenewal(loan.paymentDate)) {
+    return {
+      ...loan,
+      billingCycle, // Ensure billingCycle is set
+    };
+  }
+
+  let nextPayment = loan.paymentDate;
+  // Keep advancing until we get a future date
+  while (needsRenewal(nextPayment)) {
+    nextPayment = getNextRenewalDate(nextPayment, billingCycle);
+  }
+
+  return {
+    ...loan,
+    paymentDate: nextPayment,
+    billingCycle, // Ensure billingCycle is set
+  };
+};
