@@ -79,7 +79,7 @@ export const SubscriptionsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Subscriptions</h1>
         {!showForm && (
           <Button onClick={() => setShowForm(true)}>
             + Add Subscription
@@ -89,7 +89,7 @@ export const SubscriptionsPage: React.FC = () => {
 
       {showForm && (
         <Card>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             {editingSubscription ? 'Edit Subscription' : 'Add New Subscription'}
           </h2>
           <SubscriptionForm
