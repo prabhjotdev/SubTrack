@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Subscription, Loan } from '../../types';
 import {
   formatCurrency,
@@ -14,6 +14,22 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) => {
+  const [showInfoBanner, setShowInfoBanner] = useState(false);
+
+  useEffect(() => {
+    // Check if user has dismissed the banner or if they have data
+    const bannerDismissed = localStorage.getItem('subtrack_info_banner_dismissed');
+    const isNewUser = subscriptions.length === 0 && loans.length === 0;
+
+    // Show banner only for new users who haven't dismissed it
+    setShowInfoBanner(isNewUser && bannerDismissed !== 'true');
+  }, [subscriptions.length, loans.length]);
+
+  const handleDismissBanner = () => {
+    localStorage.setItem('subtrack_info_banner_dismissed', 'true');
+    setShowInfoBanner(false);
+  };
+
   const upcomingSubscriptions = subscriptions
     .filter((sub) => isUpcoming(sub.renewalDate))
     .sort((a, b) => new Date(a.renewalDate).getTime() - new Date(b.renewalDate).getTime());
@@ -37,6 +53,41 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
 
   return (
     <div className="space-y-6 sm:space-y-8">
+      {/* Info Banner for New Users */}
+      {showInfoBanner && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-4 sm:p-5 shadow-lg">
+          <div className="flex items-start gap-3 sm:gap-4">
+            {/* Info Icon */}
+            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 dark:bg-blue-600 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1.5">
+                📱 Your Data Stays on This Device
+              </h3>
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+                SubTrack stores all your data locally on this device only. Your subscriptions and loans <span className="font-semibold">won't sync across multiple devices</span> or browsers. Make sure to keep your data backed up if needed!
+              </p>
+            </div>
+
+            {/* Close Button */}
+            <button
+              onClick={handleDismissBanner}
+              className="flex-shrink-0 p-1.5 sm:p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              aria-label="Dismiss banner"
+            >
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Total Cost Card */}
