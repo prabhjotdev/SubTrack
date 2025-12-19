@@ -55,7 +55,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
             {formatCurrency(totalMonthlySubscriptions)}
           </p>
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            Avg. monthly cost • {subscriptions.length} subscriptions
+            Monthly cost • {subscriptions.length} subscriptions
           </p>
         </div>
 
