@@ -4,6 +4,9 @@ import { useTheme } from '../../contexts/ThemeContext';
 export const Settings: React.FC = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [infoBannerDismissed, setInfoBannerDismissed] = useState(
+    localStorage.getItem('subtrack_info_banner_dismissed') === 'true'
+  );
 
   const handleDeleteAllData = () => {
     // Clear all data from localStorage
@@ -13,6 +16,11 @@ export const Settings: React.FC = () => {
 
     // Reload the page to reflect changes
     window.location.reload();
+  };
+
+  const handleResetInfoBanner = () => {
+    localStorage.removeItem('subtrack_info_banner_dismissed');
+    setInfoBannerDismissed(false);
   };
 
   return (
@@ -57,6 +65,40 @@ export const Settings: React.FC = () => {
                 }`}
               />
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Notifications Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-6">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+            Notifications & Info
+          </h2>
+
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+            <div className="flex-1">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
+                Dashboard Info Banner
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                Shows information about local data storage for new users
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-500">
+                Status: <span className={`font-semibold ${infoBannerDismissed ? 'text-gray-600 dark:text-gray-400' : 'text-green-600 dark:text-green-400'}`}>
+                  {infoBannerDismissed ? 'Hidden' : 'Visible (for new users)'}
+                </span>
+              </p>
+            </div>
+
+            {infoBannerDismissed && (
+              <button
+                onClick={handleResetInfoBanner}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm"
+              >
+                Show Again
+              </button>
+            )}
           </div>
         </div>
       </div>
