@@ -63,7 +63,8 @@ export const SubscriptionsPage: React.FC = () => {
   const handleMarkAsPaid = (id: string) => {
     const updatedSubscriptions = subscriptions.map((sub) => {
       if (sub.id === id) {
-        const nextRenewal = getNextRenewalDate(sub.renewalDate, sub.billingCycle);
+        const billingCycle = sub.billingCycle || 'monthly';
+        const nextRenewal = getNextRenewalDate(sub.renewalDate, billingCycle);
         return { ...sub, renewalDate: nextRenewal };
       }
       return sub;

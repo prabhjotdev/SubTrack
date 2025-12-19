@@ -6,7 +6,6 @@ import {
   getDaysUntil,
   isUpcoming,
   calculateLoanDetails,
-  calculateMonthlyEquivalent,
 } from '../../utils/calculations';
 
 interface DashboardProps {
