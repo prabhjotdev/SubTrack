@@ -63,7 +63,8 @@ export const SubscriptionsPage: React.FC = () => {
   const handleMarkAsPaid = (id: string) => {
     const updatedSubscriptions = subscriptions.map((sub) => {
       if (sub.id === id) {
-        const nextRenewal = getNextRenewalDate(sub.renewalDate, sub.billingCycle);
+        const billingCycle = sub.billingCycle || 'monthly';
+        const nextRenewal = getNextRenewalDate(sub.renewalDate, billingCycle);
         return { ...sub, renewalDate: nextRenewal };
       }
       return sub;
@@ -77,9 +78,9 @@ export const SubscriptionsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Subscriptions</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Subscriptions</h1>
         {!showForm && (
           <Button onClick={() => setShowForm(true)}>
             + Add Subscription
@@ -89,7 +90,7 @@ export const SubscriptionsPage: React.FC = () => {
 
       {showForm && (
         <Card>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-4">
             {editingSubscription ? 'Edit Subscription' : 'Add New Subscription'}
           </h2>
           <SubscriptionForm

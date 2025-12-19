@@ -83,9 +83,9 @@ export const LoansPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Loans</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Loans</h1>
         {!showForm && (
           <Button onClick={() => setShowForm(true)}>
             + Add Loan
@@ -95,7 +95,7 @@ export const LoansPage: React.FC = () => {
 
       {showForm && (
         <Card>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-4">
             {editingLoan ? 'Edit Loan' : 'Add New Loan'}
           </h2>
           <LoanForm
