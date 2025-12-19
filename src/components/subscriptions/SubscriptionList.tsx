@@ -36,7 +36,7 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {sortedSubscriptions.map((subscription) => {
         const daysUntil = getDaysUntil(subscription.renewalDate);
         const isOverdue = daysUntil < 0;
@@ -45,32 +45,32 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
         return (
           <div
             key={subscription.id}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 hover:shadow-2xl transition-all group relative"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-6 border-l-4 hover:shadow-2xl transition-all group relative"
             style={{ borderLeftColor: subscription.colorTag }}
           >
             {/* Color indicator badge */}
             <div
-              className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center shadow-md text-white font-bold text-lg"
+              className="absolute top-4 right-4 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-md text-white font-bold text-base sm:text-lg"
               style={{ backgroundColor: subscription.colorTag }}
             >
               {subscription.vendor.charAt(0).toUpperCase()}
             </div>
 
-            <div className="space-y-4 pr-12">
+            <div className="space-y-3 sm:space-y-4 pr-12 sm:pr-14">
               {/* Header */}
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
                   {subscription.vendor}
                 </h3>
                 {subscription.description && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                     {subscription.description}
                   </p>
                 )}
               </div>
 
               {/* Amount */}
-              <div className="bg-blue-50 dark:bg-blue-900/40 rounded-lg p-3 border border-blue-100 dark:border-blue-800">
+              <div className="bg-blue-50 dark:bg-blue-900/40 rounded-lg p-2.5 sm:p-3 border border-blue-100 dark:border-blue-800">
                 <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
                   {subscription.billingCycle === 'weekly' && 'Weekly Cost'}
                   {subscription.billingCycle === 'monthly' && 'Monthly Cost'}
@@ -78,7 +78,7 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
                   {subscription.billingCycle === 'yearly' && 'Yearly Cost'}
                   {!subscription.billingCycle && 'Cost'}
                 </p>
-                <p className="text-2xl font-bold text-blue-900 dark:text-blue-300">
+                <p className="text-xl sm:text-2xl font-bold text-blue-900 dark:text-blue-300">
                   {formatCurrency(subscription.amount)}
                 </p>
               </div>
@@ -118,7 +118,7 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
               {daysUntil <= 7 && (
                 <button
                   onClick={() => onMarkAsPaid(subscription.id)}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
+                  className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -131,13 +131,13 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={() => onEdit(subscription)}
-                  className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                  className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 active:bg-gray-300 dark:active:bg-gray-500 text-gray-700 dark:text-gray-300 font-medium py-2.5 px-4 rounded-lg transition-colors text-sm"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => onDelete(subscription.id)}
-                  className="flex-1 bg-red-50 dark:bg-red-900/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                  className="flex-1 bg-red-50 dark:bg-red-900/40 hover:bg-red-100 dark:hover:bg-red-900/60 active:bg-red-200 dark:active:bg-red-900/80 text-red-600 dark:text-red-400 font-medium py-2.5 px-4 rounded-lg transition-colors text-sm"
                 >
                   Delete
                 </button>

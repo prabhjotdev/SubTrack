@@ -36,7 +36,7 @@ export const LoanList: React.FC<LoanListProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       {sortedLoans.map((loan) => {
         const calculations = calculateLoanDetails(loan);
         const daysUntil = getDaysUntil(loan.paymentDate);
@@ -46,24 +46,24 @@ export const LoanList: React.FC<LoanListProps> = ({
         return (
           <div
             key={loan.id}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border-l-4 hover:shadow-2xl transition-all group"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 sm:p-6 border-l-4 hover:shadow-2xl transition-all group"
             style={{ borderLeftColor: loan.colorTag }}
           >
             {/* Header with color badge */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-start gap-3 flex-1">
                 <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-lg"
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center font-bold text-white text-lg sm:text-xl shadow-lg"
                   style={{ backgroundColor: loan.colorTag }}
                 >
                   {loan.vendor.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors mb-1">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors mb-1">
                     {loan.vendor}
                   </h3>
                   {loan.description && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                       {loan.description}
                     </p>
                   )}
@@ -72,22 +72,22 @@ export const LoanList: React.FC<LoanListProps> = ({
             </div>
 
             {/* Financial Overview */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3 border border-gray-100 dark:border-gray-700">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
+              <div className="bg-gray-50 dark:bg-gray-900/40 rounded-lg p-2 sm:p-3 border border-gray-100 dark:border-gray-700">
                 <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Total Loan</p>
-                <p className="text-sm font-bold text-gray-900 dark:text-white">
+                <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white truncate">
                   {formatCurrency(loan.totalLoanAmount)}
                 </p>
               </div>
-              <div className="bg-emerald-50 dark:bg-emerald-900/40 rounded-lg p-3 border border-emerald-100 dark:border-emerald-800">
+              <div className="bg-emerald-50 dark:bg-emerald-900/40 rounded-lg p-2 sm:p-3 border border-emerald-100 dark:border-emerald-800">
                 <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">Paid</p>
-                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                <p className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-300 truncate">
                   {formatCurrency(loan.amountPaidSoFar)}
                 </p>
               </div>
-              <div className="bg-red-50 dark:bg-red-900/40 rounded-lg p-3 border border-red-100 dark:border-red-800">
+              <div className="bg-red-50 dark:bg-red-900/40 rounded-lg p-2 sm:p-3 border border-red-100 dark:border-red-800">
                 <p className="text-xs text-red-600 dark:text-red-400 font-medium mb-1">Remaining</p>
-                <p className="text-sm font-bold text-red-700 dark:text-red-300">
+                <p className="text-xs sm:text-sm font-bold text-red-700 dark:text-red-300 truncate">
                   {formatCurrency(calculations.remainingBalance)}
                 </p>
               </div>
@@ -116,8 +116,8 @@ export const LoanList: React.FC<LoanListProps> = ({
             </div>
 
             {/* Payment Info */}
-            <div className="bg-blue-50 dark:bg-blue-900/40 rounded-xl p-4 mb-4 border border-blue-100 dark:border-blue-800">
-              <div className="flex items-center justify-between">
+            <div className="bg-blue-50 dark:bg-blue-900/40 rounded-xl p-3 sm:p-4 mb-4 border border-blue-100 dark:border-blue-800">
+              <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
                     {loan.billingCycle === 'weekly' && 'Weekly Payment'}
@@ -126,7 +126,7 @@ export const LoanList: React.FC<LoanListProps> = ({
                     {loan.billingCycle === 'yearly' && 'Yearly Payment'}
                     {!loan.billingCycle && 'Payment'}
                   </p>
-                  <p className="text-lg font-bold text-blue-900 dark:text-blue-300">
+                  <p className="text-base sm:text-lg font-bold text-blue-900 dark:text-blue-300">
                     {formatCurrency(loan.paymentAmount)}
                   </p>
                 </div>
@@ -137,7 +137,7 @@ export const LoanList: React.FC<LoanListProps> = ({
                     </svg>
                     <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Due Date</p>
                   </div>
-                  <p className="text-sm font-semibold text-blue-900 dark:text-blue-300">
+                  <p className="text-xs sm:text-sm font-semibold text-blue-900 dark:text-blue-300">
                     {formatDate(loan.paymentDate)}
                   </p>
                 </div>
@@ -166,7 +166,7 @@ export const LoanList: React.FC<LoanListProps> = ({
             {daysUntil <= 7 && (
               <button
                 onClick={() => onMarkAsPaid(loan.id)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
+                className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -176,16 +176,16 @@ export const LoanList: React.FC<LoanListProps> = ({
             )}
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={() => onEdit(loan)}
-                className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
+                className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 active:bg-gray-300 dark:active:bg-gray-500 text-gray-700 dark:text-gray-300 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
               >
                 📝 Edit
               </button>
               <button
                 onClick={() => onDelete(loan.id)}
-                className="flex-1 bg-red-50 dark:bg-red-900/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
+                className="flex-1 bg-red-50 dark:bg-red-900/40 hover:bg-red-100 dark:hover:bg-red-900/60 active:bg-red-200 dark:active:bg-red-900/80 text-red-600 dark:text-red-400 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
               >
                 🗑️ Delete
               </button>
