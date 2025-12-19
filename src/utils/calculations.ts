@@ -130,3 +130,24 @@ export const autoAdvanceLoanPayment = (loan: Loan): Loan => {
     billingCycle, // Ensure billingCycle is set
   };
 };
+
+// Calculate monthly equivalent cost based on billing cycle
+export const calculateMonthlyEquivalent = (amount: number, billingCycle?: BillingCycle): number => {
+  if (!billingCycle) {
+    // Default to monthly if not specified
+    return amount;
+  }
+
+  switch (billingCycle) {
+    case 'weekly':
+      return amount * 4.33; // Average weeks per month
+    case 'monthly':
+      return amount;
+    case 'quarterly':
+      return amount / 3;
+    case 'yearly':
+      return amount / 12;
+    default:
+      return amount;
+  }
+};

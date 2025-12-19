@@ -6,6 +6,7 @@ import {
   getDaysUntil,
   isUpcoming,
   calculateLoanDetails,
+  calculateMonthlyEquivalent,
 } from '../../utils/calculations';
 
 interface DashboardProps {
@@ -23,7 +24,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
     .sort((a, b) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime());
 
   const totalMonthlySubscriptions = subscriptions.reduce(
-    (sum, sub) => sum + sub.amount,
+    (sum, sub) => sum + calculateMonthlyEquivalent(sub.amount, sub.billingCycle),
     0
   );
 
@@ -54,7 +55,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
             {formatCurrency(totalMonthlySubscriptions)}
           </p>
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            Monthly cost • {subscriptions.length} subscriptions
+            Avg. monthly cost • {subscriptions.length} subscriptions
           </p>
         </div>
 
