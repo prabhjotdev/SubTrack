@@ -23,10 +23,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
     .filter((loan) => isUpcoming(loan.paymentDate))
     .sort((a, b) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime());
 
-  const totalMonthlySubscriptions = subscriptions.reduce(
-    (sum, sub) => sum + calculateMonthlyEquivalent(sub.amount, sub.billingCycle),
-    0
-  );
+  const totalMonthlySubscriptions = subscriptions
+    .filter((sub) => !sub.billingCycle || sub.billingCycle === 'monthly')
+    .reduce((sum, sub) => sum + sub.amount, 0);
 
   const totalOutstandingLoans = loans.reduce((sum, loan) => {
     const { remainingBalance } = calculateLoanDetails(loan);
@@ -55,7 +54,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriptions, loans }) =>
             {formatCurrency(totalMonthlySubscriptions)}
           </p>
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            Avg. monthly cost • {subscriptions.length} subscriptions
+            Monthly cost • {subscriptions.length} subscriptions
           </p>
         </div>
 
