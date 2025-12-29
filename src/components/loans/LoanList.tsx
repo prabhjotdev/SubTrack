@@ -121,6 +121,7 @@ export const LoanList: React.FC<LoanListProps> = ({
                 <div>
                   <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
                     {loan.billingCycle === 'weekly' && 'Weekly Payment'}
+                    {loan.billingCycle === 'biweekly' && 'Bi-weekly Payment'}
                     {loan.billingCycle === 'monthly' && 'Monthly Payment'}
                     {loan.billingCycle === 'quarterly' && 'Quarterly Payment'}
                     {loan.billingCycle === 'yearly' && 'Yearly Payment'}

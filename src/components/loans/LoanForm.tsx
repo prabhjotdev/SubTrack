@@ -142,6 +142,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
           required
         >
           <option value="weekly">Weekly</option>
+          <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
           <option value="monthly">Monthly</option>
           <option value="quarterly">Quarterly (3 months)</option>
           <option value="yearly">Yearly</option>
