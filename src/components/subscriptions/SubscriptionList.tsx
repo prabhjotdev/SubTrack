@@ -73,6 +73,7 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
               <div className="bg-blue-50 dark:bg-blue-900/40 rounded-lg p-2.5 sm:p-3 border border-blue-100 dark:border-blue-800">
                 <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
                   {subscription.billingCycle === 'weekly' && 'Weekly Cost'}
+                  {subscription.billingCycle === 'biweekly' && 'Bi-weekly Cost'}
                   {subscription.billingCycle === 'monthly' && 'Monthly Cost'}
                   {subscription.billingCycle === 'quarterly' && 'Quarterly Cost'}
                   {subscription.billingCycle === 'yearly' && 'Yearly Cost'}

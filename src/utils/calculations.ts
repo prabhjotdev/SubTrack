@@ -58,6 +58,9 @@ export const getNextRenewalDate = (currentDate: string, billingCycle: BillingCyc
     case 'weekly':
       date.setDate(date.getDate() + 7);
       break;
+    case 'biweekly':
+      date.setDate(date.getDate() + 14);
+      break;
     case 'monthly':
       date.setMonth(date.getMonth() + 1);
       break;
@@ -141,6 +144,8 @@ export const calculateMonthlyEquivalent = (amount: number, billingCycle?: Billin
   switch (billingCycle) {
     case 'weekly':
       return amount * 4.33; // Average weeks per month
+    case 'biweekly':
+      return amount * 2.17; // 26 bi-weekly periods per year / 12 months
     case 'monthly':
       return amount;
     case 'quarterly':
