@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Loan } from '../types';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useLoans } from '../hooks/useFirebaseData';
 import { LoanForm } from '../components/loans/LoanForm';
 import { LoanList } from '../components/loans/LoanList';
 import { Button } from '../components/common/Button';
@@ -8,29 +8,34 @@ import { Card } from '../components/common/Card';
 import { autoAdvanceLoanPayment, getNextRenewalDate } from '../utils/calculations';
 
 export const LoansPage: React.FC = () => {
-  const [loans, setLoans] = useLocalStorage<Loan[]>('subtrack_loans', []);
+  const {
+    loans,
+    loading,
+    addLoan,
+    updateLoan,
+    deleteLoan,
+  } = useLoans();
   const [showForm, setShowForm] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | undefined>();
 
   // Auto-advance loan payment dates when component mounts
   useEffect(() => {
-    const advancedLoans = loans.map(loan => autoAdvanceLoanPayment(loan));
-    // Only update if something changed
-    const hasChanges = advancedLoans.some((advanced, index) =>
-      advanced.paymentDate !== loans[index].paymentDate
-    );
-    if (hasChanges) {
-      setLoans(advancedLoans);
-    }
+    loans.forEach(loan => {
+      const advanced = autoAdvanceLoanPayment(loan);
+      if (advanced.paymentDate !== loan.paymentDate) {
+        updateLoan(loan.id, { paymentDate: advanced.paymentDate });
+      }
+    });
   }, []);
 
-  const handleAdd = (loan: Omit<Loan, 'id'>) => {
-    const newLoan: Loan = {
-      ...loan,
-      id: Date.now().toString(),
-    };
-    setLoans([...loans, newLoan]);
-    setShowForm(false);
+  const handleAdd = async (loan: Omit<Loan, 'id'>) => {
+    try {
+      await addLoan(loan);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error adding loan:', error);
+      alert('Failed to add loan. Please try again.');
+    }
   };
 
   const handleEdit = (loan: Loan) => {
@@ -38,49 +43,63 @@ export const LoansPage: React.FC = () => {
     setShowForm(true);
   };
 
-  const handleUpdate = (updatedData: Omit<Loan, 'id'>) => {
+  const handleUpdate = async (updatedData: Omit<Loan, 'id'>) => {
     if (!editingLoan) return;
 
-    const updatedLoans = loans.map((loan) =>
-      loan.id === editingLoan.id
-        ? { ...updatedData, id: editingLoan.id }
-        : loan
-    );
-    setLoans(updatedLoans);
-    setShowForm(false);
-    setEditingLoan(undefined);
-  };
-
-  const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this loan?')) {
-      setLoans(loans.filter((loan) => loan.id !== id));
+    try {
+      await updateLoan(editingLoan.id, updatedData);
+      setShowForm(false);
+      setEditingLoan(undefined);
+    } catch (error) {
+      console.error('Error updating loan:', error);
+      alert('Failed to update loan. Please try again.');
     }
   };
 
-  const handleMarkAsPaid = (id: string) => {
-    const updatedLoans = loans.map((loan) => {
-      if (loan.id === id) {
-        const billingCycle = loan.billingCycle || 'monthly';
-        const nextPayment = getNextRenewalDate(loan.paymentDate, billingCycle);
-        const newAmountPaid = loan.amountPaidSoFar + loan.paymentAmount;
-        // Don't exceed total loan amount
-        const finalAmountPaid = Math.min(newAmountPaid, loan.totalLoanAmount);
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this loan?')) {
+      try {
+        await deleteLoan(id);
+      } catch (error) {
+        console.error('Error deleting loan:', error);
+        alert('Failed to delete loan. Please try again.');
+      }
+    }
+  };
 
-        return {
-          ...loan,
+  const handleMarkAsPaid = async (id: string) => {
+    const loan = loans.find(l => l.id === id);
+    if (loan) {
+      const billingCycle = loan.billingCycle || 'monthly';
+      const nextPayment = getNextRenewalDate(loan.paymentDate, billingCycle);
+      const newAmountPaid = loan.amountPaidSoFar + loan.paymentAmount;
+      // Don't exceed total loan amount
+      const finalAmountPaid = Math.min(newAmountPaid, loan.totalLoanAmount);
+
+      try {
+        await updateLoan(id, {
           paymentDate: nextPayment,
           amountPaidSoFar: finalAmountPaid,
-        };
+        });
+      } catch (error) {
+        console.error('Error marking as paid:', error);
+        alert('Failed to mark as paid. Please try again.');
       }
-      return loan;
-    });
-    setLoans(updatedLoans);
+    }
   };
 
   const handleCancel = () => {
     setShowForm(false);
     setEditingLoan(undefined);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-gray-600 dark:text-gray-400">Loading loans...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6">
