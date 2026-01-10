@@ -18,6 +18,18 @@ import { Subscription, Loan } from '../types';
 const SUBSCRIPTIONS_COLLECTION = 'subscriptions';
 const LOANS_COLLECTION = 'loans';
 
+// Helper function to remove undefined values from objects
+// Firestore doesn't accept undefined values
+const removeUndefined = <T extends Record<string, any>>(obj: T): Partial<T> => {
+  const cleaned: any = {};
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] !== undefined) {
+      cleaned[key] = obj[key];
+    }
+  });
+  return cleaned;
+};
+
 // Subscription operations
 export const subscriptionsService = {
   // Get all subscriptions for a user
@@ -57,10 +69,11 @@ export const subscriptionsService = {
   // Update a subscription
   async update(id: string, subscription: Partial<Subscription>): Promise<void> {
     const docRef = doc(db, SUBSCRIPTIONS_COLLECTION, id);
-    await updateDoc(docRef, {
+    const cleanedData = removeUndefined({
       ...subscription,
       updatedAt: Timestamp.now(),
     });
+    await updateDoc(docRef, cleanedData);
   },
 
   // Delete a subscription
@@ -126,10 +139,11 @@ export const loansService = {
   // Update a loan
   async update(id: string, loan: Partial<Loan>): Promise<void> {
     const docRef = doc(db, LOANS_COLLECTION, id);
-    await updateDoc(docRef, {
+    const cleanedData = removeUndefined({
       ...loan,
       updatedAt: Timestamp.now(),
     });
+    await updateDoc(docRef, cleanedData);
   },
 
   // Delete a loan
