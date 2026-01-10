@@ -1,11 +1,18 @@
 import React from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { Subscription, Loan } from '../types';
+import { useSubscriptions, useLoans } from '../hooks/useFirebaseData';
 import { Dashboard } from '../components/dashboard/Dashboard';
 
 export const DashboardPage: React.FC = () => {
-  const [subscriptions] = useLocalStorage<Subscription[]>('subtrack_subscriptions', []);
-  const [loans] = useLocalStorage<Loan[]>('subtrack_loans', []);
+  const { subscriptions, loading: subscriptionsLoading } = useSubscriptions();
+  const { loans, loading: loansLoading } = useLoans();
+
+  if (subscriptionsLoading || loansLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div>

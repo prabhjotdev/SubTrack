@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const Settings: React.FC = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const { currentUser, logout } = useAuth();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [infoBannerDismissed, setInfoBannerDismissed] = useState(
     localStorage.getItem('subtrack_info_banner_dismissed') === 'true'
@@ -23,6 +25,15 @@ export const Settings: React.FC = () => {
     setInfoBannerDismissed(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error logging out:', error);
+      alert('Failed to logout. Please try again.');
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
@@ -32,6 +43,51 @@ export const Settings: React.FC = () => {
         <p className="text-gray-600 dark:text-gray-400">
           Manage your application preferences
         </p>
+      </div>
+
+      {/* Account Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-6">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+            Account
+          </h2>
+
+          <div className="space-y-4">
+            {/* User Info */}
+            <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                Signed in as
+              </h3>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                {currentUser?.email || 'Anonymous User'}
+              </p>
+              {currentUser?.isAnonymous && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Your data syncs across devices anonymously
+                </p>
+              )}
+            </div>
+
+            {/* Logout Button */}
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
+                  Sign Out
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Log out of your account
+                </p>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition-colors"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Appearance Section */}

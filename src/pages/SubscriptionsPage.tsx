@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Subscription } from '../types';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSubscriptions } from '../hooks/useFirebaseData';
 import { SubscriptionForm } from '../components/subscriptions/SubscriptionForm';
 import { SubscriptionList } from '../components/subscriptions/SubscriptionList';
 import { Button } from '../components/common/Button';
@@ -8,32 +8,34 @@ import { Card } from '../components/common/Card';
 import { autoRenewSubscription, getNextRenewalDate, formatCurrency } from '../utils/calculations';
 
 export const SubscriptionsPage: React.FC = () => {
-  const [subscriptions, setSubscriptions] = useLocalStorage<Subscription[]>(
-    'subtrack_subscriptions',
-    []
-  );
+  const {
+    subscriptions,
+    loading,
+    addSubscription,
+    updateSubscription,
+    deleteSubscription,
+  } = useSubscriptions();
   const [showForm, setShowForm] = useState(false);
   const [editingSubscription, setEditingSubscription] = useState<Subscription | undefined>();
 
   // Auto-renew subscriptions when component mounts or subscriptions change
   useEffect(() => {
-    const renewedSubscriptions = subscriptions.map(sub => autoRenewSubscription(sub));
-    // Only update if something changed
-    const hasChanges = renewedSubscriptions.some((renewed, index) =>
-      renewed.renewalDate !== subscriptions[index].renewalDate
-    );
-    if (hasChanges) {
-      setSubscriptions(renewedSubscriptions);
-    }
+    subscriptions.forEach(sub => {
+      const renewed = autoRenewSubscription(sub);
+      if (renewed.renewalDate !== sub.renewalDate) {
+        updateSubscription(sub.id, { renewalDate: renewed.renewalDate });
+      }
+    });
   }, []);
 
-  const handleAdd = (subscription: Omit<Subscription, 'id'>) => {
-    const newSubscription: Subscription = {
-      ...subscription,
-      id: Date.now().toString(),
-    };
-    setSubscriptions([...subscriptions, newSubscription]);
-    setShowForm(false);
+  const handleAdd = async (subscription: Omit<Subscription, 'id'>) => {
+    try {
+      await addSubscription(subscription);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error adding subscription:', error);
+      alert('Failed to add subscription. Please try again.');
+    }
   };
 
   const handleEdit = (subscription: Subscription) => {
@@ -41,41 +43,56 @@ export const SubscriptionsPage: React.FC = () => {
     setShowForm(true);
   };
 
-  const handleUpdate = (updatedData: Omit<Subscription, 'id'>) => {
+  const handleUpdate = async (updatedData: Omit<Subscription, 'id'>) => {
     if (!editingSubscription) return;
 
-    const updatedSubscriptions = subscriptions.map((sub) =>
-      sub.id === editingSubscription.id
-        ? { ...updatedData, id: editingSubscription.id }
-        : sub
-    );
-    setSubscriptions(updatedSubscriptions);
-    setShowForm(false);
-    setEditingSubscription(undefined);
-  };
-
-  const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this subscription?')) {
-      setSubscriptions(subscriptions.filter((sub) => sub.id !== id));
+    try {
+      await updateSubscription(editingSubscription.id, updatedData);
+      setShowForm(false);
+      setEditingSubscription(undefined);
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+      alert('Failed to update subscription. Please try again.');
     }
   };
 
-  const handleMarkAsPaid = (id: string) => {
-    const updatedSubscriptions = subscriptions.map((sub) => {
-      if (sub.id === id) {
-        const billingCycle = sub.billingCycle || 'monthly';
-        const nextRenewal = getNextRenewalDate(sub.renewalDate, billingCycle);
-        return { ...sub, renewalDate: nextRenewal };
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this subscription?')) {
+      try {
+        await deleteSubscription(id);
+      } catch (error) {
+        console.error('Error deleting subscription:', error);
+        alert('Failed to delete subscription. Please try again.');
       }
-      return sub;
-    });
-    setSubscriptions(updatedSubscriptions);
+    }
+  };
+
+  const handleMarkAsPaid = async (id: string) => {
+    const subscription = subscriptions.find(sub => sub.id === id);
+    if (subscription) {
+      const billingCycle = subscription.billingCycle || 'monthly';
+      const nextRenewal = getNextRenewalDate(subscription.renewalDate, billingCycle);
+      try {
+        await updateSubscription(id, { renewalDate: nextRenewal });
+      } catch (error) {
+        console.error('Error marking as paid:', error);
+        alert('Failed to mark as paid. Please try again.');
+      }
+    }
   };
 
   const handleCancel = () => {
     setShowForm(false);
     setEditingSubscription(undefined);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-gray-600 dark:text-gray-400">Loading subscriptions...</div>
+      </div>
+    );
+  }
 
   // Calculate totals
   const totalAmount = subscriptions.reduce((sum, sub) => sum + sub.amount, 0);
