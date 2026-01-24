@@ -22,6 +22,7 @@ export interface Loan {
   finalPaymentDate?: string; // Date of final/last installment (when loan ends)
   colorTag: string;
   billingCycle?: BillingCycle; // Optional for backwards compatibility
+  archived?: boolean; // Soft delete flag for archiving paid-off loans
 }
 
 export interface LoanCalculations {

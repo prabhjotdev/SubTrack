@@ -17,6 +17,7 @@ export const LoansPage: React.FC = () => {
   } = useLoans();
   const [showForm, setShowForm] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | undefined>();
+  const [showArchived, setShowArchived] = useState(false);
 
   // Auto-advance loan payment dates when component mounts
   useEffect(() => {
@@ -94,15 +95,40 @@ export const LoansPage: React.FC = () => {
   };
 
   const handleArchive = async (id: string) => {
-    if (window.confirm('Archive this paid-off loan? This will remove it from your active loans list.')) {
+    if (window.confirm('Archive this paid-off loan? You can view and restore it from the archived loans list.')) {
       try {
-        await deleteLoan(id);
+        await updateLoan(id, { archived: true });
       } catch (error) {
         console.error('Error archiving loan:', error);
         alert('Failed to archive loan. Please try again.');
       }
     }
   };
+
+  const handleRestore = async (id: string) => {
+    try {
+      await updateLoan(id, { archived: false });
+    } catch (error) {
+      console.error('Error restoring loan:', error);
+      alert('Failed to restore loan. Please try again.');
+    }
+  };
+
+  const handlePermanentDelete = async (id: string) => {
+    if (window.confirm('Permanently delete this loan? This action cannot be undone.')) {
+      try {
+        await deleteLoan(id);
+      } catch (error) {
+        console.error('Error deleting loan:', error);
+        alert('Failed to delete loan. Please try again.');
+      }
+    }
+  };
+
+  // Filter loans based on archived status
+  const filteredLoans = loans.filter(loan =>
+    showArchived ? loan.archived === true : !loan.archived
+  );
 
   if (loading) {
     return (
@@ -112,15 +138,29 @@ export const LoansPage: React.FC = () => {
     );
   }
 
+  const archivedCount = loans.filter(loan => loan.archived).length;
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Loans</h1>
-        {!showForm && (
-          <Button onClick={() => setShowForm(true)}>
-            + Add Loan
-          </Button>
-        )}
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+          {showArchived ? 'Archived Loans' : 'Loans'}
+        </h1>
+        <div className="flex gap-2">
+          {archivedCount > 0 && (
+            <Button
+              onClick={() => setShowArchived(!showArchived)}
+              variant="secondary"
+            >
+              {showArchived ? '← Back to Active' : `📦 View Archived (${archivedCount})`}
+            </Button>
+          )}
+          {!showForm && !showArchived && (
+            <Button onClick={() => setShowForm(true)}>
+              + Add Loan
+            </Button>
+          )}
+        </div>
       </div>
 
       {showForm && (
@@ -137,11 +177,13 @@ export const LoansPage: React.FC = () => {
       )}
 
       <LoanList
-        loans={loans}
+        loans={filteredLoans}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={showArchived ? handlePermanentDelete : handleDelete}
         onMarkAsPaid={handleMarkAsPaid}
         onArchive={handleArchive}
+        onRestore={showArchived ? handleRestore : undefined}
+        showArchived={showArchived}
       />
     </div>
   );

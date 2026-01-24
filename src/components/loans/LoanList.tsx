@@ -8,6 +8,8 @@ interface LoanListProps {
   onDelete: (id: string) => void;
   onMarkAsPaid: (id: string) => void;
   onArchive?: (id: string) => void;
+  onRestore?: (id: string) => void;
+  showArchived?: boolean;
 }
 
 export const LoanList: React.FC<LoanListProps> = ({
@@ -16,6 +18,8 @@ export const LoanList: React.FC<LoanListProps> = ({
   onDelete,
   onMarkAsPaid,
   onArchive,
+  onRestore,
+  showArchived = false,
 }) => {
   if (loans.length === 0) {
     return (
@@ -184,8 +188,8 @@ export const LoanList: React.FC<LoanListProps> = ({
               </div>
             )}
 
-            {/* Mark as Paid button - show when due in 7 days or less and NOT paid off */}
-            {!isPaidOff && daysUntil <= 7 && (
+            {/* Mark as Paid button - show when due in 7 days or less and NOT paid off and NOT archived */}
+            {!isPaidOff && daysUntil <= 7 && !showArchived && (
               <button
                 onClick={() => onMarkAsPaid(loan.id)}
                 className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
@@ -197,8 +201,8 @@ export const LoanList: React.FC<LoanListProps> = ({
               </button>
             )}
 
-            {/* Archive button - show when loan is paid off */}
-            {isPaidOff && onArchive && (
+            {/* Archive button - show when loan is paid off and NOT in archived view */}
+            {isPaidOff && onArchive && !showArchived && (
               <button
                 onClick={() => onArchive(loan.id)}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
@@ -210,19 +214,34 @@ export const LoanList: React.FC<LoanListProps> = ({
               </button>
             )}
 
+            {/* Restore button - show in archived view */}
+            {showArchived && onRestore && (
+              <button
+                onClick={() => onRestore(loan.id)}
+                className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Restore Loan
+              </button>
+            )}
+
             {/* Actions */}
             <div className="flex gap-2 sm:gap-3">
-              <button
-                onClick={() => onEdit(loan)}
-                className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 active:bg-gray-300 dark:active:bg-gray-500 text-gray-700 dark:text-gray-300 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
-              >
-                📝 Edit
-              </button>
+              {!showArchived && (
+                <button
+                  onClick={() => onEdit(loan)}
+                  className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 active:bg-gray-300 dark:active:bg-gray-500 text-gray-700 dark:text-gray-300 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
+                >
+                  📝 Edit
+                </button>
+              )}
               <button
                 onClick={() => onDelete(loan.id)}
                 className="flex-1 bg-red-50 dark:bg-red-900/40 hover:bg-red-100 dark:hover:bg-red-900/60 active:bg-red-200 dark:active:bg-red-900/80 text-red-600 dark:text-red-400 font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm"
               >
-                🗑️ Delete
+                🗑️ {showArchived ? 'Delete Permanently' : 'Delete'}
               </button>
             </div>
           </div>
