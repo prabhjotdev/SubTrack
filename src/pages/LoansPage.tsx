@@ -93,6 +93,17 @@ export const LoansPage: React.FC = () => {
     setEditingLoan(undefined);
   };
 
+  const handleArchive = async (id: string) => {
+    if (window.confirm('Archive this paid-off loan? This will remove it from your active loans list.')) {
+      try {
+        await deleteLoan(id);
+      } catch (error) {
+        console.error('Error archiving loan:', error);
+        alert('Failed to archive loan. Please try again.');
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -130,6 +141,7 @@ export const LoansPage: React.FC = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onMarkAsPaid={handleMarkAsPaid}
+        onArchive={handleArchive}
       />
     </div>
   );

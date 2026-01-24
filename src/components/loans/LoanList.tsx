@@ -7,6 +7,7 @@ interface LoanListProps {
   onEdit: (loan: Loan) => void;
   onDelete: (id: string) => void;
   onMarkAsPaid: (id: string) => void;
+  onArchive?: (id: string) => void;
 }
 
 export const LoanList: React.FC<LoanListProps> = ({
@@ -14,6 +15,7 @@ export const LoanList: React.FC<LoanListProps> = ({
   onEdit,
   onDelete,
   onMarkAsPaid,
+  onArchive,
 }) => {
   if (loans.length === 0) {
     return (
@@ -42,6 +44,7 @@ export const LoanList: React.FC<LoanListProps> = ({
         const daysUntil = getDaysUntil(loan.paymentDate);
         const isOverdue = daysUntil < 0;
         const isUpcomingSoon = daysUntil >= 0 && daysUntil <= 7;
+        const isPaidOff = calculations.paymentProgress >= 100;
 
         return (
           <div
@@ -115,45 +118,63 @@ export const LoanList: React.FC<LoanListProps> = ({
               </div>
             </div>
 
-            {/* Payment Info */}
-            <div className="bg-blue-50 dark:bg-blue-900/40 rounded-xl p-3 sm:p-4 mb-4 border border-blue-100 dark:border-blue-800">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
-                    {loan.billingCycle === 'weekly' && 'Weekly Payment'}
-                    {loan.billingCycle === 'biweekly' && 'Bi-weekly Payment'}
-                    {loan.billingCycle === 'monthly' && 'Monthly Payment'}
-                    {loan.billingCycle === 'quarterly' && 'Quarterly Payment'}
-                    {loan.billingCycle === 'yearly' && 'Yearly Payment'}
-                    {!loan.billingCycle && 'Payment'}
-                  </p>
-                  <p className="text-base sm:text-lg font-bold text-blue-900 dark:text-blue-300">
-                    {formatCurrency(loan.paymentAmount)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-1 justify-end mb-1">
-                    <svg className="w-3 h-3 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Due Date</p>
+            {/* Payment Info or Paid Off Status */}
+            {isPaidOff ? (
+              <div className="bg-emerald-50 dark:bg-emerald-900/40 rounded-xl p-4 mb-4 border-2 border-emerald-500 dark:border-emerald-600">
+                <div className="flex items-center justify-center gap-3">
+                  <svg className="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
+                      🎉 Loan Paid Off!
+                    </p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">
+                      Congratulations on completing this loan
+                    </p>
                   </div>
-                  <p className="text-xs sm:text-sm font-semibold text-blue-900 dark:text-blue-300">
-                    {formatDate(loan.paymentDate)}
-                  </p>
                 </div>
               </div>
-              {isOverdue && (
-                <div className="mt-3 bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 px-3 py-2 rounded-lg text-xs font-semibold text-center">
-                  ⚠️ Payment Overdue
+            ) : (
+              <div className="bg-blue-50 dark:bg-blue-900/40 rounded-xl p-3 sm:p-4 mb-4 border border-blue-100 dark:border-blue-800">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
+                      {loan.billingCycle === 'weekly' && 'Weekly Payment'}
+                      {loan.billingCycle === 'biweekly' && 'Bi-weekly Payment'}
+                      {loan.billingCycle === 'monthly' && 'Monthly Payment'}
+                      {loan.billingCycle === 'quarterly' && 'Quarterly Payment'}
+                      {loan.billingCycle === 'yearly' && 'Yearly Payment'}
+                      {!loan.billingCycle && 'Payment'}
+                    </p>
+                    <p className="text-base sm:text-lg font-bold text-blue-900 dark:text-blue-300">
+                      {formatCurrency(loan.paymentAmount)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center gap-1 justify-end mb-1">
+                      <svg className="w-3 h-3 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Due Date</p>
+                    </div>
+                    <p className="text-xs sm:text-sm font-semibold text-blue-900 dark:text-blue-300">
+                      {formatDate(loan.paymentDate)}
+                    </p>
+                  </div>
                 </div>
-              )}
-              {isUpcomingSoon && !isOverdue && (
-                <div className="mt-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 px-3 py-2 rounded-lg text-xs font-semibold text-center">
-                  🔔 Due in {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
-                </div>
-              )}
-            </div>
+                {isOverdue && (
+                  <div className="mt-3 bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 px-3 py-2 rounded-lg text-xs font-semibold text-center">
+                    ⚠️ Payment Overdue
+                  </div>
+                )}
+                {isUpcomingSoon && !isOverdue && (
+                  <div className="mt-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 px-3 py-2 rounded-lg text-xs font-semibold text-center">
+                    🔔 Due in {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+                  </div>
+                )}
+              </div>
+            )}
 
             {loan.finalPaymentDate && (
               <div className="mb-4 pt-3 border-t border-gray-100 dark:border-gray-700">
@@ -163,8 +184,8 @@ export const LoanList: React.FC<LoanListProps> = ({
               </div>
             )}
 
-            {/* Mark as Paid button - show when due in 7 days or less */}
-            {daysUntil <= 7 && (
+            {/* Mark as Paid button - show when due in 7 days or less and NOT paid off */}
+            {!isPaidOff && daysUntil <= 7 && (
               <button
                 onClick={() => onMarkAsPaid(loan.id)}
                 className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
@@ -173,6 +194,19 @@ export const LoanList: React.FC<LoanListProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Mark as Paid
+              </button>
+            )}
+
+            {/* Archive button - show when loan is paid off */}
+            {isPaidOff && onArchive && (
+              <button
+                onClick={() => onArchive(loan.id)}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 mb-4"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                </svg>
+                Archive Loan
               </button>
             )}
 
